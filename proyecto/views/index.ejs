@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Usuarios</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: "Roboto", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #b8d8ff, #e7f1ff);
+        }
+
+        .container {
+            width: 900px;
+            background: rgba(255, 255, 255, 0.30);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 30px 40px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #2b4b6f;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        a button {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            padding: 10px 18px;
+            border: none;
+            background: #6a90c9;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        form label {
+            display: block;
+            margin-top: 10px;
+            color: #2e4a67;
+            font-size: 15px;
+        }
+
+        form input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255,255,255,0.7);
+            outline: none;
+            font-size: 15px;
+        }
+
+        form button {
+            margin-top: 15px;
+            width: 100%;
+            padding: 12px;
+            background: #2f6dc4;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 25px;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.5);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            color: #2b4b6f;
+        }
+
+        th {
+            background: rgba(0,0,0,0.15);
+            font-weight: 500;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(255,255,255,0.6);
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        a {
+            color: #174a91;
+            font-weight: 500;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="/login">
+        <button type="button">Salir</button>
+    </a>
+
+    <div class="container">
+
+        <h2>Agregar usuario</h2>
+
+        <form action="/add" method="POST">
+            <label for="name">Nombre:</label>
+            <input type="text" name="name" id="name" required>
+
+            <label for="email">Correo:</label>
+            <input type="email" name="email" id="email" required>
+
+            <button type="submit">Agregar</button>
+        </form>
+
+        <h1>Lista de Usuarios</h1>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Acciones</th>
+            </tr>
+
+            <% if (users.length > 0) { %>
+                <% users.forEach(user => { %>
+                    <tr id="row-<%= user.id %>">
+                        <form action="/update/<%= user.id %>" method="POST">
+
+                            <td><%= user.id %></td>
+
+                            <td>
+                                <span id="name-text-<%= user.id %>"><%= user.name %></span>
+                                <input type="text" name="name" id="name-input-<%= user.id %>" 
+                                       value="<%= user.name %>" style="display:none;" required>
+                            </td>
+
+                            <td>
+                                <span id="email-text-<%= user.id %>"><%= user.email %></span>
+                                <input type="email" name="email" id="email-input-<%= user.id %>" 
+                                       value="<%= user.email %>" style="display:none;" required>
+                            </td>
+
+                            <td>
+                                <button type="button" id="edit-btn-<%= user.id %>" onclick="enableEdit(<%= user.id %>)">
+                                    Editar
+                                </button>
+
+                                <button type="submit" id="save-btn-<%= user.id %>" style="display:none;">
+                                    Guardar
+                                </button>
+
+                                <button type="button" id="cancel-btn-<%= user.id %>" style="display:none;"
+                                        onclick="cancelEdit(<%= user.id %>)">
+                                    Cancelar
+                                </button>
+
+                                <a href="/delete/<%= user.id %>">Eliminar</a>
+                            </td>
+
+                        </form>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <tr>
+                    <td colspan="4">No hay usuarios registrados</td>
+                </tr>
+            <% } %>
+
+        </table>
+
+    </div>
+
+    <script>
+        function enableEdit(id) {
+            document.getElementById(`name-text-${id}`).style.display = "none";
+            document.getElementById(`email-text-${id}`).style.display = "none";
+
+            document.getElementById(`name-input-${id}`).style.display = "inline-block";
+            document.getElementById(`email-input-${id}`).style.display = "inline-block";
+
+            document.getElementById(`save-btn-${id}`).style.display = "inline-block";
+            document.getElementById(`cancel-btn-${id}`).style.display = "inline-block";
+
+            document.getElementById(`edit-btn-${id}`).style.display = "none";
+        }
+
+        function cancelEdit(id) {
+            const nameText = document.getElementById(`name-text-${id}`);
+            const emailText = document.getElementById(`email-text-${id}`);
+
+            const nameInput = document.getElementById(`name-input-${id}`);
+            const emailInput = document.getElementById(`email-input-${id}`);
+
+            nameInput.value = nameText.innerText;
+            emailInput.value = emailText.innerText;
+
+            nameText.style.display = "inline";
+            emailText.style.display = "inline";
+
+            nameInput.style.display = "none";
+            emailInput.style.display = "none";
+
+            document.getElementById(`save-btn-${id}`).style.display = "none";
+            document.getElementById(`cancel-btn-${id}`).style.display = "none";
+
+            document.getElementById(`edit-btn-${id}`).style.display = "inline-block";
+        }
+    </script>
+
+</body>
+</html>

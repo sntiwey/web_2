@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="blue-bg">
+
+<div class="glass-card">
+
+    <div class="avatar-icon">
+        <div class="circle">
+            <span class="user-icon">🚀</span>
+        </div>
+    </div>
+
+    <h2 class="title">Loguear</h2>
+
+    <form action="/login" method="POST">
+
+        <label class="input-label">Email</label>
+        <div class="input-row">
+            <span class="icon">📧</span>
+            <input type="email" name="email" required>
+        </div>
+
+        <label class="input-label">Contraseña</label>
+        <div class="input-row">
+            <span class="icon">🔒</span>
+            <input type="password" name="password" required>
+        </div>
+
+        <button class="btn-login">LOGIN</button>
+    </form>
+
+    <button class="btn-secondary" onclick="openRegister()">Crear Cuenta</button>
+
+</div>
+
+<div id="register-modal" class="modal hidden">
+    <div class="modal-card">
+
+        <h2 class="title">Sign Up</h2>
+
+        <form action="/register" method="POST">
+
+            <label class="input-label">Email</label>
+            <div class="input-row">
+                <span class="icon">📧</span>
+                <input type="email" name="email" required>
+            </div>
+
+            <label class="input-label">Password</label>
+            <div class="input-row">
+                <span class="icon">🔒</span>
+                <input type="password" name="password" required>
+            </div>
+
+            <button class="btn-login" style="margin-top: 15px;">Registrar</button>
+        </form>
+
+        <button class="btn-secondary" onclick="closeRegister()">Cancelar</button>
+    </div>
+</div>
+
+<script>
+function openRegister() {
+    document.getElementById('register-modal').classList.remove('hidden');
+}
+function closeRegister() {
+    document.getElementById('register-modal').classList.add('hidden');
+}
+</script>
+
+</body>
+</html>
